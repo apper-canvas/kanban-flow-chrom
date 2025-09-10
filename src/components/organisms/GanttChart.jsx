@@ -9,9 +9,9 @@ const GanttChart = ({ tasks = [], users = [], projects = [], loading = false }) 
   const ganttData = useMemo(() => {
     if (!tasks.length) return { chartTasks: [], weeks: [], startDate: new Date(), endDate: new Date() };
 
-    const taskDates = tasks.map(task => ({
-      start: parseISO(task.createdAt),
-      end: parseISO(task.dueDate)
+const taskDates = tasks.map(task => ({
+      start: task.created_at_c ? parseISO(task.created_at_c) : new Date(),
+      end: task.due_date_c ? parseISO(task.due_date_c) : new Date()
     }));
 
     const allDates = taskDates.flatMap(({ start, end }) => [start, end]);
@@ -31,8 +31,8 @@ const GanttChart = ({ tasks = [], users = [], projects = [], loading = false }) 
     }
 
     const chartTasks = tasks.map(task => {
-      const taskStart = parseISO(task.createdAt);
-      const taskEnd = parseISO(task.dueDate);
+const taskStart = task.created_at_c ? parseISO(task.created_at_c) : new Date();
+      const taskEnd = task.due_date_c ? parseISO(task.due_date_c) : new Date();
       const startOffset = differenceInDays(taskStart, startDate);
       const duration = differenceInDays(taskEnd, taskStart) + 1;
       

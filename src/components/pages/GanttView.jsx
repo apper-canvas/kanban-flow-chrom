@@ -51,11 +51,15 @@ const GanttView = () => {
     let filtered = [...tasks];
 
 if (selectedProject) {
-      filtered = filtered.filter(task => task.projectId === parseInt(selectedProject));
+      filtered = filtered.filter(task => task.project_id_c?.Id === parseInt(selectedProject) || task.project_id_c === parseInt(selectedProject));
     }
 
     // Sort by due date for better timeline visualization
-filtered.sort((a, b) => new Date(a.due_date_c) - new Date(b.due_date_c));
+filtered.sort((a, b) => {
+      const dateA = a.due_date_c ? new Date(a.due_date_c) : new Date(0);
+      const dateB = b.due_date_c ? new Date(b.due_date_c) : new Date(0);
+      return dateA - dateB;
+    });
 
     setFilteredTasks(filtered);
   }, [tasks, selectedProject]);
@@ -78,10 +82,10 @@ const projectOptions = projects.map(project => ({
     if (!filteredTasks.length) return null;
 
 const totalTasks = filteredTasks.length;
-    const completedTasks = filteredTasks.filter(t => t.status_c === "done").length;
+const completedTasks = filteredTasks.filter(t => t.status_c === "done").length;
     const inProgressTasks = filteredTasks.filter(t => t.status_c === "in-progress").length;
     const overdueTasks = filteredTasks.filter(t => 
-      new Date(t.due_date_c) < new Date() && t.status_c !== "done"
+      t.due_date_c && new Date(t.due_date_c) < new Date() && t.status_c !== "done"
     ).length;
 
     return {

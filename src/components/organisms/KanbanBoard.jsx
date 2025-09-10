@@ -69,7 +69,7 @@ return tasks.filter(task => task.status_c === status).sort((a, b) => (a.position
     if (!draggedTask || draggedTask.status === newStatus) return;
 
     try {
-      const updatedTask = { ...draggedTask, status: newStatus };
+const updatedTask = { ...draggedTask, status_c: newStatus };
       await onTaskUpdate(updatedTask.Id, updatedTask);
       toast.success("Task moved successfully!");
     } catch (error) {
@@ -79,7 +79,7 @@ return tasks.filter(task => task.status_c === status).sort((a, b) => (a.position
 
   const TaskCard = ({ task }) => {
 const assignee = getUserById(task.assignee_id_c?.Id || task.assignee_id_c);
-    const isOverdue = new Date(task.due_date_c) < new Date() && task.status_c !== "done";
+    const isOverdue = task.due_date_c && new Date(task.due_date_c) < new Date() && task.status_c !== "done";
 
     return (
       <motion.div
@@ -120,7 +120,7 @@ const assignee = getUserById(task.assignee_id_c?.Id || task.assignee_id_c);
                 className={isOverdue ? "text-error" : "text-gray-400"} 
               />
               <span className={`text-xs ${isOverdue ? "text-error font-medium" : "text-gray-500"}`}>
-{format(new Date(task.due_date_c), "MMM d")}
+{task.due_date_c ? format(new Date(task.due_date_c), "MMM d") : "No due date"}
               </span>
               {isOverdue && (
                 <Badge variant="error" size="sm">Overdue</Badge>
