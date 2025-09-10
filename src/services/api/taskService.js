@@ -101,7 +101,60 @@ class TaskService {
 
   getNextPosition(status) {
     const tasksWithStatus = this.tasks.filter(t => t.status === status);
-    return tasksWithStatus.length > 0 ? Math.max(...tasksWithStatus.map(t => t.position)) + 1 : 1;
+return tasksWithStatus.length > 0 ? Math.max(...tasksWithStatus.map(t => t.position)) + 1 : 1;
+  }
+
+  async uploadFile(taskId, file) {
+    await delay(500);
+    const task = this.tasks.find(t => t.Id === parseInt(taskId));
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    const fileData = {
+      Id: Date.now() + Math.random(),
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      uploadedAt: new Date().toISOString()
+    };
+
+    if (!task.attachments) {
+      task.attachments = [];
+    }
+    task.attachments.push(fileData);
+
+    return fileData;
+  }
+
+  async deleteFile(taskId, fileId) {
+    await delay(300);
+    const task = this.tasks.find(t => t.Id === parseInt(taskId));
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (task.attachments) {
+      task.attachments = task.attachments.filter(file => file.Id !== fileId);
+    }
+
+    return { success: true };
+  }
+
+  async getFileUrl(taskId, fileId) {
+    await delay(200);
+    const task = this.tasks.find(t => t.Id === parseInt(taskId));
+    if (!task || !task.attachments) {
+      throw new Error("File not found");
+    }
+
+    const file = task.attachments.find(f => f.Id === fileId);
+    if (!file) {
+      throw new Error("File not found");
+    }
+
+    return file.url;
   }
 }
 

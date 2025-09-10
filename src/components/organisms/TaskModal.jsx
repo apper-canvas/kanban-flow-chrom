@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "@/components/molecules/Modal";
 import FormField from "@/components/molecules/FormField";
 import UserSelect from "@/components/molecules/UserSelect";
+import FileUpload from "@/components/molecules/FileUpload";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import Avatar from "@/components/atoms/Avatar";
@@ -25,7 +26,8 @@ const TaskModal = ({
     priority: "medium",
     assigneeId: "",
     dueDate: "",
-    progress: 0
+progress: 0,
+    attachments: []
   });
   
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,8 @@ const TaskModal = ({
         priority: task.priority || "medium",
         assigneeId: task.assigneeId || "",
         dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
-        progress: task.progress || 0
+progress: task.progress || 0,
+        attachments: task.attachments || []
       });
     } else if (isNew) {
       setFormData({
@@ -62,6 +65,13 @@ const TaskModal = ({
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: null }));
     }
+};
+
+  const handleFilesChange = (files) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: files
+    }));
   };
 
   const validateForm = () => {
@@ -92,7 +102,8 @@ const TaskModal = ({
       const taskData = {
         ...formData,
         dueDate: new Date(formData.dueDate).toISOString(),
-        progress: Number(formData.progress)
+progress: Number(formData.progress),
+        attachments: formData.attachments
       };
       
       await onSave(taskData);
@@ -228,6 +239,15 @@ const TaskModal = ({
               step="5"
             />
           </div>
+</div>
+
+        {/* File Attachments Section */}
+        <div className="mt-6">
+          <FileUpload 
+            files={formData.attachments}
+            onFilesChange={handleFilesChange}
+            disabled={loading}
+          />
         </div>
 
         {!isNew && task && (
