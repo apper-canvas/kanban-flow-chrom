@@ -248,4 +248,3 @@ class ProjectService {
 }
 
 export default new ProjectService();
-export default new ProjectService();
