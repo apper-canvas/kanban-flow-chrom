@@ -7,12 +7,13 @@ import ApperIcon from "@/components/ApperIcon";
 const Sidebar = ({ isOpen, onClose, className }) => {
   const location = useLocation();
 
-  const navigation = [
+const navigation = [
     { name: "Dashboard", href: "/", icon: "LayoutDashboard" },
     { name: "Projects", href: "/projects", icon: "FolderOpen" },
     { name: "Kanban Board", href: "/kanban", icon: "Trello" },
     { name: "Gantt View", href: "/gantt", icon: "Calendar" },
     { name: "Team", href: "/team", icon: "Users" },
+    { name: "Notifications", href: "/notifications", icon: "Bell" },
   ];
 
   const NavItem = ({ item }) => {

@@ -1,24 +1,23 @@
-import { createContext, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { createContext, useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { setUser, clearUser } from './store/userSlice';
-import Login from '@/components/pages/Login';
-import Signup from '@/components/pages/Signup';
-import Callback from '@/components/pages/Callback';
-import ErrorPage from '@/components/pages/ErrorPage';
-import ResetPassword from '@/components/pages/ResetPassword';
-import PromptPassword from '@/components/pages/PromptPassword';
+import Notifications from "@/components/pages/Notifications";
+import { clearUser, setUser } from "@/store/userSlice";
 import Layout from "@/components/organisms/Layout";
+import Signup from "@/components/pages/Signup";
+import Callback from "@/components/pages/Callback";
+import ResetPassword from "@/components/pages/ResetPassword";
+import ErrorPage from "@/components/pages/ErrorPage";
 import Dashboard from "@/components/pages/Dashboard";
+import Login from "@/components/pages/Login";
 import Projects from "@/components/pages/Projects";
-import KanbanBoard from "@/components/pages/KanbanBoard";
-import GanttView from "@/components/pages/GanttView";
 import Team from "@/components/pages/Team";
-
+import GanttView from "@/components/pages/GanttView";
+import PromptPassword from "@/components/pages/PromptPassword";
+import KanbanBoard from "@/components/pages/KanbanBoard";
 // Create auth context
 export const AuthContext = createContext(null);
-
 function AppContent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -134,7 +133,8 @@ function AppContent() {
           <Route path="projects" element={<Projects />} />
           <Route path="kanban" element={<KanbanBoard />} />
           <Route path="gantt" element={<GanttView />} />
-          <Route path="team" element={<Team />} />
+<Route path="team" element={<Team />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
       </Routes>
       
