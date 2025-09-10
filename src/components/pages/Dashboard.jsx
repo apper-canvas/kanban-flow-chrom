@@ -179,7 +179,7 @@ title: "Active Tasks",
 {task.title_c || task.Name}
                       </p>
                       <p className="text-xs text-gray-500 capitalize">
-{task.status?.replace("-", " ") || "unknown"} • {task.priority || "unknown"} priority
+                        {task.status_c?.replace("-", " ") || "unknown"} • {task.priority_c || "unknown"} priority
                       </p>
                     </div>
 {task.assignee && (
