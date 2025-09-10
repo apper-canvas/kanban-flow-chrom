@@ -61,9 +61,11 @@ const ProjectGrid = ({ projects = [], loading = false }) => {
               <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
                 {project.name}
               </h3>
-              <Badge variant={getStatusVariant(project.status)} size="sm">
-                {project.status.replace("_", " ")}
-              </Badge>
+{project.status_c && (
+                <Badge variant={getStatusVariant(project.status_c)} size="sm">
+                  {project.status_c.replace("_", " ")}
+                </Badge>
+              )}
             </div>
             
             <p className="text-sm text-gray-600 mb-4 line-clamp-2">
@@ -82,7 +84,9 @@ const ProjectGrid = ({ projects = [], loading = false }) => {
               <div className="flex items-center space-x-2">
                 <ApperIcon name="Calendar" size={14} className="text-gray-400" />
                 <span className="text-xs text-gray-500">
-                  Due {format(new Date(project.dueDate), "MMM d, yyyy")}
+{project.due_date_c && (
+                    <>Due {format(new Date(project.due_date_c), "MMM d, yyyy")}</>
+                  )}
                 </span>
               </div>
               
