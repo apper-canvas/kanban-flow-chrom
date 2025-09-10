@@ -5,9 +5,8 @@ import Avatar from "@/components/atoms/Avatar";
 const UserSelect = ({ users = [], value, onChange, label, error, ...props }) => {
   const userOptions = users.map(user => ({
     value: user.Id.toString(),
-    label: user.name
+    label: user.name_c || user.Name || 'Unknown User'
   }));
-
   return (
     <Select
       label={label}
