@@ -1,0 +1,44 @@
+[
+  {
+    "Id": 1,
+    "taskId": 3,
+    "authorId": 1,
+    "content": "I've completed the initial structure and navigation. Ready for UI implementation.",
+    "createdAt": "2024-02-16T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "taskId": 3,
+    "authorId": 2,
+    "content": "Great work! I'll start working on the design mockups for the filtering interface.",
+    "createdAt": "2024-02-16T14:15:00Z"
+  },
+  {
+    "Id": 3,
+    "taskId": 4,
+    "authorId": 3,
+    "content": "Shopping cart functionality is progressing well. Implementing the new checkout flow now.",
+    "createdAt": "2024-02-22T09:45:00Z"
+  },
+  {
+    "Id": 4,
+    "taskId": 7,
+    "authorId": 2,
+    "content": "Architecture documentation is almost complete. Will share the technical specs by end of week.",
+    "createdAt": "2024-03-02T11:20:00Z"
+  },
+  {
+    "Id": 5,
+    "taskId": 10,
+    "authorId": 1,
+    "content": "Dashboard components are looking great. Added responsive breakpoints for mobile views.",
+    "createdAt": "2024-03-15T16:30:00Z"
+  },
+  {
+    "Id": 6,
+    "taskId": 12,
+    "authorId": 7,
+    "content": "Found several security vulnerabilities. Created detailed report with remediation steps.",
+    "createdAt": "2024-03-10T13:45:00Z"
+  }
+]

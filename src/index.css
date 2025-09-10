@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* React Toastify Styles */
+@import 'react-toastify/dist/ReactToastify.css';
+
+/* Custom Toast Styling */
+.Toastify__toast {
+  @apply rounded-lg shadow-lg border font-sans;
+  font-size: 14px;
+  padding: 16px;
+  min-height: 64px;
+}
+
+.Toastify__toast--success {
+  @apply bg-white border-success text-gray-900;
+}
+
+.Toastify__toast--error {
+  @apply bg-white border-error text-gray-900;
+}
+
+.Toastify__toast--info {
+  @apply bg-white border-info text-gray-900;
+}
+
+.Toastify__toast--warning {
+  @apply bg-white border-warning text-gray-900;
+}
+
+.Toastify__progress-bar {
+  @apply bg-gradient-to-r from-primary to-accent;
+}
+
+.Toastify__close-button {
+  @apply text-gray-500 hover:text-gray-700;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400;
+}
+
+/* Drag and Drop Styles */
+.drag-preview {
+  @apply opacity-50 transform rotate-3 scale-105;
+}
+
+.drop-zone {
+  @apply bg-gradient-to-b from-primary/10 to-accent/10 border-2 border-dashed border-primary/30 rounded-lg;
+}
+
+.drop-zone-active {
+  @apply bg-gradient-to-b from-primary/20 to-accent/20 border-primary/50;
+}
+
+/* Animation Utilities */
+.hover-lift {
+  @apply transition-all duration-200 ease-out hover:transform hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}
+
+.glass-effect {
+  @apply bg-white/80 backdrop-blur-sm border border-white/20;
+}
+
+/* Priority Colors */
+.priority-high {
+  @apply bg-gradient-to-r from-red-500 to-red-600;
+}
+
+.priority-medium {
+  @apply bg-gradient-to-r from-yellow-500 to-yellow-600;
+}
+
+.priority-low {
+  @apply bg-gradient-to-r from-green-500 to-green-600;
+}
+
+/* Status Colors */
+.status-todo {
+  @apply bg-gradient-to-r from-gray-500 to-gray-600;
+}
+
+.status-in-progress {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600;
+}
+
+.status-done {
+  @apply bg-gradient-to-r from-green-500 to-green-600;
+}
