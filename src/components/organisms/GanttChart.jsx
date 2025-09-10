@@ -10,8 +10,8 @@ const GanttChart = ({ tasks = [], users = [], projects = [], loading = false }) 
     if (!tasks.length) return { chartTasks: [], weeks: [], startDate: new Date(), endDate: new Date() };
 
 const taskDates = tasks.map(task => ({
-      start: task.created_at_c ? parseISO(task.created_at_c) : new Date(),
-      end: task.due_date_c ? parseISO(task.due_date_c) : new Date()
+start: task.created_at_c && typeof task.created_at_c === 'string' && task.created_at_c.trim() ? parseISO(task.created_at_c) : new Date(),
+      end: task.due_date_c && typeof task.due_date_c === 'string' && task.due_date_c.trim() ? parseISO(task.due_date_c) : new Date()
     }));
 
     const allDates = taskDates.flatMap(({ start, end }) => [start, end]);
@@ -31,8 +31,8 @@ const taskDates = tasks.map(task => ({
     }
 
     const chartTasks = tasks.map(task => {
-const taskStart = task.created_at_c ? parseISO(task.created_at_c) : new Date();
-      const taskEnd = task.due_date_c ? parseISO(task.due_date_c) : new Date();
+const taskStart = task.created_at_c && typeof task.created_at_c === 'string' && task.created_at_c.trim() ? parseISO(task.created_at_c) : new Date();
+      const taskEnd = task.due_date_c && typeof task.due_date_c === 'string' && task.due_date_c.trim() ? parseISO(task.due_date_c) : new Date();
       const startOffset = differenceInDays(taskStart, startDate);
       const duration = differenceInDays(taskEnd, taskStart) + 1;
       
