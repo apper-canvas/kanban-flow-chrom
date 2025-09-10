@@ -22,9 +22,9 @@ const StatsCards = ({ stats, loading = false }) => {
       color: "from-green-500 to-green-600"
     },
     { 
-      title: "Team Members", 
-      value: "0", 
-      change: "0%", 
+title: "Team Members", 
+      value: stats?.teamMembers?.toString() || "0", 
+      change: stats?.teamMembersChange || "0%", 
       trend: "up", 
       icon: "Users",
       color: "from-purple-500 to-purple-600"
