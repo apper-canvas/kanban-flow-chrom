@@ -799,5 +799,4 @@ const TeamPage = () => {
   );
 };
 
-export default TeamPage;
 export default Team;
