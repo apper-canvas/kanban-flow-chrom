@@ -190,303 +190,8 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
   );
 };
 
+
 const Team = () => {
-  const [users, setUsers] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const [usersData, tasksData] = await Promise.all([
-        userService.getAll(),
-        taskService.getAll()
-      ]);
-      
-      // Enrich users with task statistics
-const enrichedUsers = usersData.map(user => {
-        const userTasks = tasksData.filter(task => (task.assignee_id_c?.Id || task.assignee_id_c) === user.Id);
-        const completedTasks = userTasks.filter(task => task.status_c === "done");
-        const inProgressTasks = userTasks.filter(task => task.status_c === "in-progress");
-        const overdueTasks = userTasks.filter(task => 
-          new Date(task.due_date_c) < new Date() && task.status_c !== "done"
-        );
-
-        return {
-          ...user,
-          statistics: {
-            totalTasks: userTasks.length,
-            completedTasks: completedTasks.length,
-            inProgressTasks: inProgressTasks.length,
-            overdueTasks: overdueTasks.length,
-            completionRate: userTasks.length > 0 
-              ? Math.round((completedTasks.length / userTasks.length) * 100) 
-              : 0
-          }
-        };
-      });
-      
-      setUsers(enrichedUsers);
-      setTasks(tasksData);
-      setFilteredUsers(enrichedUsers);
-      
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredUsers(users);
-      return;
-    }
-
-    const searchLower = searchTerm.toLowerCase();
-    const filtered = users.filter(user => 
-(user.name_c || user.Name || '').toLowerCase().includes(searchLower) ||
-      (user.email_c || '').toLowerCase().includes(searchLower) ||
-      (user.role_c || '').toLowerCase().includes(searchLower)
-    );
-
-    setFilteredUsers(filtered);
-  }, [users, searchTerm]);
-
-  const handleInviteUser = () => {
-    toast.info("User invitation feature would open here");
-  };
-
-  const getWorkloadColor = (completionRate) => {
-    if (completionRate >= 80) return "success";
-    if (completionRate >= 60) return "primary";
-    if (completionRate >= 40) return "warning";
-    return "error";
-  };
-
-  const getWorkloadLabel = (stats) => {
-    const { inProgressTasks, overdueTasks } = stats;
-    const activeLoad = inProgressTasks + overdueTasks;
-    
-    if (activeLoad === 0) return "Available";
-    if (activeLoad <= 2) return "Light";
-    if (activeLoad <= 4) return "Moderate";
-    return "Heavy";
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <Error message={error} onRetry={loadData} />;
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-Employees & Contacts
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Manage your team members and their contact information.
-          </p>
-        </div>
-        <Button
-          onClick={handleInviteUser}
-          icon="UserPlus"
-          size="lg"
-        >
-          Invite User
-        </Button>
-      </div>
-
-      {/* Search */}
-      <div className="max-w-md">
-        <SearchBar
-          value={searchTerm}
-          onSearch={setSearchTerm}
-placeholder="Search employees..."
-        />
-      </div>
-
-      {/* Team Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card padding="md">
-          <div className="text-center">
-<p className="text-2xl font-bold text-primary">{users.length}</p>
-            <p className="text-sm text-gray-600">Total Employees</p>
-          </div>
-        </Card>
-        <Card padding="md">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-success">
-              {users.filter(u => getWorkloadLabel(u.statistics) === "Available").length}
-            </p>
-            <p className="text-sm text-gray-600">Available</p>
-          </div>
-        </Card>
-        <Card padding="md">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-warning">
-              {users.filter(u => ["Light", "Moderate"].includes(getWorkloadLabel(u.statistics))).length}
-            </p>
-            <p className="text-sm text-gray-600">Active</p>
-          </div>
-        </Card>
-        <Card padding="md">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-error">
-              {users.filter(u => getWorkloadLabel(u.statistics) === "Heavy").length}
-            </p>
-            <p className="text-sm text-gray-600">Busy</p>
-          </div>
-        </Card>
-      </div>
-
-      {/* Team Members Grid */}
-      {filteredUsers.length === 0 ? (
-        <Empty
-title={users.length === 0 ? "No Employees" : "No Employees Found"}
-          description={
-            users.length === 0 
-              ? "Add your first employee to start managing your team" 
-              : "Try adjusting your search to find employees"
-          }
-          actionLabel={users.length === 0 ? "Add First Employee" : "Clear Search"}
-          onAction={users.length === 0 ? handleAddEmployee : () => setSearchTerm("")}
-          icon="Users"
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map((user, index) => (
-            <motion.div
-              key={user.Id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card hover className="group">
-                <div className="flex items-center space-x-4 mb-4">
-                  <Avatar
-src={user.avatar_c}
-                    name={user.name_c || user.Name}
-                    size="lg"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                      {user.name_c || user.Name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-1">{user.role_c}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email_c}</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {/* Workload Status */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Workload</span>
-                    <Badge variant={getWorkloadColor(user.statistics.completionRate)}>
-                      {getWorkloadLabel(user.statistics)}
-                    </Badge>
-                  </div>
-
-                  {/* Task Statistics */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <div className="flex items-center space-x-1">
-                        <ApperIcon name="CheckSquare" size={14} className="text-success" />
-                        <span className="text-gray-600">Completed</span>
-                      </div>
-                      <p className="font-semibold text-gray-900">
-                        {user.statistics.completedTasks}
-                      </p>
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-1">
-                        <ApperIcon name="Clock" size={14} className="text-info" />
-                        <span className="text-gray-600">In Progress</span>
-                      </div>
-                      <p className="font-semibold text-gray-900">
-                        {user.statistics.inProgressTasks}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Completion Rate */}
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-gray-600">Completion Rate</span>
-                      <span className="text-sm font-medium text-gray-900">
-                        {user.statistics.completionRate}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full bg-gradient-to-r ${
-                          user.statistics.completionRate >= 80 
-                            ? "from-success to-green-600"
-                            : user.statistics.completionRate >= 60
-                            ? "from-primary to-accent"
-                            : "from-warning to-yellow-600"
-                        }`}
-                        style={{ width: `${user.statistics.completionRate}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Overdue Tasks Warning */}
-                  {user.statistics.overdueTasks > 0 && (
-                    <div className="flex items-center space-x-2 p-2 bg-error/10 rounded-lg">
-                      <ApperIcon name="AlertTriangle" size={16} className="text-error" />
-                      <span className="text-sm text-error font-medium">
-                        {user.statistics.overdueTasks} overdue task{user.statistics.overdueTasks > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
-</div>
-  );
-};
-
-const TeamPage = () => {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -495,11 +200,6 @@ const TeamPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
-
-  // Define activeUsers based on user statistics
-  const activeUsers = users.filter(user => 
-    user.statistics && (user.statistics.inProgressTasks > 0 || user.statistics.completedTasks > 0)
-  );
 
   const loadData = async () => {
     try {
@@ -655,10 +355,10 @@ const TeamPage = () => {
           </div>
         </Card>
 
-        <Card className="p-6">
+<Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-bold text-accent">{activeUsers.length}</p>
+              <p className="text-2xl font-bold text-accent">{users.filter(user => user.statistics?.totalTasks > 0).length}</p>
               <p className="text-sm text-gray-600">Active Members</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg">
@@ -670,7 +370,8 @@ const TeamPage = () => {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-bold text-purple-600">{Math.round((activeUsers.length / Math.max(users.length, 1)) * 100)}%</p>
+              <p className="text-2xl font-bold text-purple-600">{Math.round((users.filter(user => user.statistics?.totalTasks > 0).length / Math.max(users.length, 1)) * 100)}%</p>
+              <p className="text-sm text-gray-600">Engagement Rate</p>
               <p className="text-sm text-gray-600">Engagement Rate</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg">
