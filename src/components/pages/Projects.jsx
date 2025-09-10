@@ -44,25 +44,25 @@ const Projects = () => {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(project => 
-        project.name.toLowerCase().includes(searchLower) ||
-        project.description.toLowerCase().includes(searchLower)
+(project.name_c || project.Name || '').toLowerCase().includes(searchLower) ||
+        (project.description_c || '').toLowerCase().includes(searchLower)
       );
     }
 
     // Apply status filter
     if (statusFilter) {
-      filtered = filtered.filter(project => project.status === statusFilter);
+filtered = filtered.filter(project => project.status_c === statusFilter);
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "name":
-          return a.name.localeCompare(b.name);
+return (a.name_c || a.Name || '').localeCompare(b.name_c || b.Name || '');
         case "dueDate":
-          return new Date(a.dueDate) - new Date(b.dueDate);
+          return new Date(a.due_date_c) - new Date(b.due_date_c);
         case "progress":
-          return b.progress - a.progress;
+          return (b.progress_c || 0) - (a.progress_c || 0);
         case "status":
           return a.status.localeCompare(b.status);
         default:
@@ -99,8 +99,8 @@ const Projects = () => {
 
   const getStatusCounts = () => {
     const counts = {};
-    projects.forEach(project => {
-      counts[project.status] = (counts[project.status] || 0) + 1;
+projects.forEach(project => {
+      counts[project.status_c] = (counts[project.status_c] || 0) + 1;
     });
     return counts;
   };

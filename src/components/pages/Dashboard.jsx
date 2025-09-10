@@ -35,10 +35,10 @@ const Dashboard = () => {
       ]);
 
       // Get recent tasks (last 5)
-      const sortedTasks = tasksData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+const sortedTasks = tasksData.sort((a, b) => new Date(b.created_at_c) - new Date(a.created_at_c));
       const recent = sortedTasks.slice(0, 5).map(task => ({
         ...task,
-        assignee: users.find(u => u.Id === task.assigneeId)
+        assignee: users.find(u => u.Id === (task.assignee_id_c?.Id || task.assignee_id_c))
       }));
 
       setProjects(projectsData.slice(0, 6)); // Show first 6 projects
@@ -55,8 +55,8 @@ const Dashboard = () => {
           color: "from-blue-500 to-blue-600"
         },
         { 
-          title: "Active Tasks", 
-          value: taskStats.inProgressTasks.toString(), 
+title: "Active Tasks", 
+          value: taskStats.inProgressTasks.toString(),
           change: "+8%", 
           trend: "up", 
           icon: "CheckSquare",
@@ -176,16 +176,16 @@ const Dashboard = () => {
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 truncate">
-                        {task.title}
+{task.title_c || task.Name}
                       </p>
                       <p className="text-xs text-gray-500 capitalize">
                         {task.status.replace("-", " ")} • {task.priority} priority
                       </p>
                     </div>
-                    {task.assignee && (
+{task.assignee && (
                       <div className="ml-3 flex-shrink-0">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-bold">
-                          {task.assignee.name.charAt(0)}
+                          {(task.assignee.name_c || task.assignee.Name)?.charAt(0)}
                         </div>
                       </div>
                     )}

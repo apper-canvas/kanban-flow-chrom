@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import Modal from "@/components/molecules/Modal";
-import FormField from "@/components/molecules/FormField";
-import UserSelect from "@/components/molecules/UserSelect";
-import FileUpload from "@/components/molecules/FileUpload";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import Avatar from "@/components/atoms/Avatar";
-import ApperIcon from "@/components/ApperIcon";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Modal from "@/components/molecules/Modal";
+import UserSelect from "@/components/molecules/UserSelect";
+import FormField from "@/components/molecules/FormField";
+import FileUpload from "@/components/molecules/FileUpload";
+import Badge from "@/components/atoms/Badge";
+import Avatar from "@/components/atoms/Avatar";
+import Button from "@/components/atoms/Button";
 
 const TaskModal = ({ 
   isOpen, 
@@ -20,40 +20,41 @@ const TaskModal = ({
   isNew = false 
 }) => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    status: "todo",
-    priority: "medium",
-    assigneeId: "",
-    dueDate: "",
-progress: 0,
-    attachments: []
+title_c: "",
+    description_c: "",
+    status_c: "todo",
+    priority_c: "medium",
+    assignee_id_c: "",
+    due_date_c: "",
+    progress_c: 0,
+    attachments_c: ""
   });
   
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (task) {
+if (task) {
       setFormData({
-        title: task.title || "",
-        description: task.description || "",
-        status: task.status || "todo",
-        priority: task.priority || "medium",
-        assigneeId: task.assigneeId || "",
-        dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
-progress: task.progress || 0,
-        attachments: task.attachments || []
+        title_c: task.title_c || task.Name || "",
+        description_c: task.description_c || "",
+        status_c: task.status_c || "todo",
+        priority_c: task.priority_c || "medium",
+        assignee_id_c: (task.assignee_id_c?.Id || task.assignee_id_c)?.toString() || "",
+        due_date_c: task.due_date_c ? task.due_date_c.split("T")[0] : "",
+        progress_c: task.progress_c || 0,
+        attachments_c: task.attachments_c || ""
       });
-    } else if (isNew) {
+} else if (isNew) {
       setFormData({
-        title: "",
-        description: "",
-        status: "todo",
-        priority: "medium",
-        assigneeId: "",
-        dueDate: "",
-        progress: 0
+        title_c: "",
+        description_c: "",
+        status_c: "todo",
+        priority_c: "medium",
+        assignee_id_c: "",
+        due_date_c: "",
+        progress_c: 0,
+        attachments_c: ""
       });
     }
   }, [task, isNew]);
@@ -67,22 +68,22 @@ progress: task.progress || 0,
     }
 };
 
-  const handleFilesChange = (files) => {
+const handleFilesChange = (files) => {
     setFormData(prev => ({
       ...prev,
-      attachments: files
+      attachments_c: files
     }));
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
+    if (!formData.title_c?.trim()) {
+      newErrors.title_c = "Title is required";
     }
     
-    if (!formData.dueDate) {
-      newErrors.dueDate = "Due date is required";
+    if (!formData.due_date_c) {
+      newErrors.due_date_c = "Due date is required";
     }
     
     setErrors(newErrors);
@@ -99,11 +100,13 @@ progress: task.progress || 0,
     setLoading(true);
     
     try {
-      const taskData = {
+const taskData = {
         ...formData,
-        dueDate: new Date(formData.dueDate).toISOString(),
-progress: Number(formData.progress),
-        attachments: formData.attachments
+        Name: formData.title_c,
+        due_date_c: new Date(formData.due_date_c).toISOString(),
+        progress_c: Number(formData.progress_c),
+        assignee_id_c: formData.assignee_id_c ? parseInt(formData.assignee_id_c) : null,
+        attachments_c: formData.attachments_c
       };
       
       await onSave(taskData);
@@ -150,7 +153,7 @@ progress: Number(formData.progress),
     return colors[priority] || "secondary";
   };
 
-  const assignedUser = users.find(user => user.Id.toString() === formData.assigneeId);
+const assignedUser = users.find(user => user.Id.toString() === formData.assignee_id_c);
 
   return (
     <Modal
@@ -161,34 +164,34 @@ progress: Number(formData.progress),
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
+<div className="md:col-span-2">
             <FormField
               label="Task Title"
-              name="title"
-              value={formData.title}
+              name="title_c"
+              value={formData.title_c}
               onChange={handleInputChange}
-              error={errors.title}
+              error={errors.title_c}
               placeholder="Enter task title"
             />
           </div>
 
-          <div className="md:col-span-2">
+<div className="md:col-span-2">
             <FormField
               type="textarea"
               label="Description"
-              name="description"
-              value={formData.description}
+              name="description_c"
+              value={formData.description_c}
               onChange={handleInputChange}
               rows={3}
               placeholder="Enter task description"
             />
           </div>
 
-          <FormField
+<FormField
             type="select"
             label="Status"
-            name="status"
-            value={formData.status}
+            name="status_c"
+            value={formData.status_c}
             onChange={handleInputChange}
             options={[
               { value: "todo", label: "To Do" },
@@ -197,11 +200,11 @@ progress: Number(formData.progress),
             ]}
           />
 
-          <FormField
+<FormField
             type="select"
             label="Priority"
-            name="priority"
-            value={formData.priority}
+            name="priority_c"
+            value={formData.priority_c}
             onChange={handleInputChange}
             options={[
               { value: "high", label: "High Priority" },
@@ -210,29 +213,29 @@ progress: Number(formData.progress),
             ]}
           />
 
-          <UserSelect
+<UserSelect
             label="Assignee"
             users={users}
-            value={formData.assigneeId}
+            value={formData.assignee_id_c}
             onChange={handleInputChange}
-            name="assigneeId"
+            name="assignee_id_c"
           />
 
           <FormField
             type="date"
             label="Due Date"
-            name="dueDate"
-            value={formData.dueDate}
-            onChange={handleInputChange}
-            error={errors.dueDate}
+name="due_date_c"
+            value={formData.due_date_c}
+onChange={handleInputChange}
+            error={errors.due_date_c}
           />
 
           <div className="md:col-span-2">
             <FormField
-              type="range"
-              label={`Progress (${formData.progress}%)`}
-              name="progress"
-              value={formData.progress}
+type="range"
+              label={`Progress (${formData.progress_c}%)`}
+name="progress_c"
+              value={formData.progress_c}
               onChange={handleInputChange}
               min="0"
               max="100"
@@ -242,9 +245,9 @@ progress: Number(formData.progress),
 </div>
 
         {/* File Attachments Section */}
-        <div className="mt-6">
+<div className="mt-6">
           <FileUpload 
-            files={formData.attachments}
+            files={formData.attachments_c}
             onFilesChange={handleFilesChange}
             disabled={loading}
           />
@@ -255,29 +258,29 @@ progress: Number(formData.progress),
             <div className="flex items-center justify-between mb-4">
               <h4 className="font-medium text-gray-900">Task Information</h4>
               <div className="flex items-center space-x-2">
-                <Badge variant={getStatusColor(formData.status)}>
-                  {formData.status.replace("-", " ")}
+<Badge variant={getStatusColor(formData.status_c)}>
+                  {formData.status_c.replace("-", " ")}
                 </Badge>
-                <Badge variant={getPriorityColor(formData.priority)}>
-                  {formData.priority} priority
+                <Badge variant={getPriorityColor(formData.priority_c)}>
+                  {formData.priority_c} priority
                 </Badge>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Created:</span>
+<span className="text-gray-500">Created:</span>
                 <p className="font-medium">
-                  {format(new Date(task.createdAt), "MMM d, yyyy")}
+                  {format(new Date(task.created_at_c || task.CreatedOn), "MMM d, yyyy")}
                 </p>
               </div>
               
               {assignedUser && (
                 <div>
-                  <span className="text-gray-500">Assignee:</span>
+<span className="text-gray-500">Assignee:</span>
                   <div className="flex items-center space-x-2 mt-1">
-                    <Avatar name={assignedUser.name} size="sm" />
-                    <span className="font-medium">{assignedUser.name}</span>
+                    <Avatar name={assignedUser.name_c || assignedUser.Name} size="sm" />
+                    <span className="font-medium">{assignedUser.name_c || assignedUser.Name}</span>
                   </div>
                 </div>
               )}

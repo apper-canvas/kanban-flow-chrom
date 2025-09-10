@@ -50,12 +50,12 @@ const GanttView = () => {
   useEffect(() => {
     let filtered = [...tasks];
 
-    if (selectedProject) {
+if (selectedProject) {
       filtered = filtered.filter(task => task.projectId === parseInt(selectedProject));
     }
 
     // Sort by due date for better timeline visualization
-    filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+filtered.sort((a, b) => new Date(a.due_date_c) - new Date(b.due_date_c));
 
     setFilteredTasks(filtered);
   }, [tasks, selectedProject]);
@@ -69,19 +69,19 @@ const GanttView = () => {
   };
 
   const selectedProjectData = projects.find(p => p.Id.toString() === selectedProject);
-  const projectOptions = projects.map(project => ({
+const projectOptions = projects.map(project => ({
     value: project.Id.toString(),
-    label: project.name
+    label: project.name_c || project.Name
   }));
 
   const getTaskStatistics = () => {
     if (!filteredTasks.length) return null;
 
-    const totalTasks = filteredTasks.length;
-    const completedTasks = filteredTasks.filter(t => t.status === "done").length;
-    const inProgressTasks = filteredTasks.filter(t => t.status === "in-progress").length;
+const totalTasks = filteredTasks.length;
+    const completedTasks = filteredTasks.filter(t => t.status_c === "done").length;
+    const inProgressTasks = filteredTasks.filter(t => t.status_c === "in-progress").length;
     const overdueTasks = filteredTasks.filter(t => 
-      new Date(t.dueDate) < new Date() && t.status !== "done"
+      new Date(t.due_date_c) < new Date() && t.status_c !== "done"
     ).length;
 
     return {
@@ -115,8 +115,8 @@ const GanttView = () => {
             Visualize project timelines and task dependencies
           </p>
           {selectedProjectData && (
-            <p className="text-sm text-gray-500 mt-1">
-              Viewing: {selectedProjectData.name}
+<p className="text-sm text-gray-500 mt-1">
+              Viewing: {selectedProjectData.name_c || selectedProjectData.Name}
             </p>
           )}
         </div>

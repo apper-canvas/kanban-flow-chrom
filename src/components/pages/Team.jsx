@@ -32,12 +32,12 @@ const Team = () => {
       ]);
       
       // Enrich users with task statistics
-      const enrichedUsers = usersData.map(user => {
-        const userTasks = tasksData.filter(task => task.assigneeId === user.Id);
-        const completedTasks = userTasks.filter(task => task.status === "done");
-        const inProgressTasks = userTasks.filter(task => task.status === "in-progress");
+const enrichedUsers = usersData.map(user => {
+        const userTasks = tasksData.filter(task => (task.assignee_id_c?.Id || task.assignee_id_c) === user.Id);
+        const completedTasks = userTasks.filter(task => task.status_c === "done");
+        const inProgressTasks = userTasks.filter(task => task.status_c === "in-progress");
         const overdueTasks = userTasks.filter(task => 
-          new Date(task.dueDate) < new Date() && task.status !== "done"
+          new Date(task.due_date_c) < new Date() && task.status_c !== "done"
         );
 
         return {
@@ -77,9 +77,9 @@ const Team = () => {
 
     const searchLower = searchTerm.toLowerCase();
     const filtered = users.filter(user => 
-      user.name.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower) ||
-      user.role.toLowerCase().includes(searchLower)
+(user.name_c || user.Name || '').toLowerCase().includes(searchLower) ||
+      (user.email_c || '').toLowerCase().includes(searchLower) ||
+      (user.role_c || '').toLowerCase().includes(searchLower)
     );
 
     setFilteredUsers(filtered);
@@ -224,16 +224,16 @@ const Team = () => {
               <Card hover className="group">
                 <div className="flex items-center space-x-4 mb-4">
                   <Avatar
-                    src={user.avatar}
-                    name={user.name}
+src={user.avatar_c}
+                    name={user.name_c || user.Name}
                     size="lg"
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                      {user.name}
+                      {user.name_c || user.Name}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-1">{user.role}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-sm text-gray-600 mb-1">{user.role_c}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email_c}</p>
                   </div>
                 </div>
 

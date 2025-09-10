@@ -26,7 +26,7 @@ const KanbanBoard = ({
   ];
 
   const getTasksByStatus = (status) => {
-    return tasks.filter(task => task.status === status).sort((a, b) => a.position - b.position);
+return tasks.filter(task => task.status_c === status).sort((a, b) => (a.position_c || 0) - (b.position_c || 0));
   };
 
   const getPriorityColor = (priority) => {
@@ -78,8 +78,8 @@ const KanbanBoard = ({
   };
 
   const TaskCard = ({ task }) => {
-    const assignee = getUserById(task.assigneeId);
-    const isOverdue = new Date(task.dueDate) < new Date() && task.status !== "done";
+const assignee = getUserById(task.assignee_id_c?.Id || task.assignee_id_c);
+    const isOverdue = new Date(task.due_date_c) < new Date() && task.status_c !== "done";
 
     return (
       <motion.div
@@ -101,15 +101,15 @@ const KanbanBoard = ({
         >
           <div className="flex items-start justify-between mb-2">
             <h4 className="font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-2">
-              {task.title}
+{task.title_c || task.Name}
             </h4>
-            <Badge variant={getPriorityColor(task.priority)} size="sm">
-              {task.priority}
+            <Badge variant={getPriorityColor(task.priority_c)} size="sm">
+              {task.priority_c}
             </Badge>
           </div>
           
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-            {task.description}
+<p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            {task.description_c}
           </p>
           
           <div className="flex items-center justify-between">
@@ -120,7 +120,7 @@ const KanbanBoard = ({
                 className={isOverdue ? "text-error" : "text-gray-400"} 
               />
               <span className={`text-xs ${isOverdue ? "text-error font-medium" : "text-gray-500"}`}>
-                {format(new Date(task.dueDate), "MMM d")}
+{format(new Date(task.due_date_c), "MMM d")}
               </span>
               {isOverdue && (
                 <Badge variant="error" size="sm">Overdue</Badge>
@@ -129,8 +129,8 @@ const KanbanBoard = ({
             
             {assignee && (
               <Avatar
-                name={assignee.name}
-                src={assignee.avatar}
+name={assignee.name_c || assignee.Name}
+                src={assignee.avatar_c}
                 size="sm"
               />
             )}

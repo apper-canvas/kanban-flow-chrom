@@ -1,63 +1,223 @@
-import usersData from "@/services/mockData/users.json";
-
-// Simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { toast } from 'react-toastify';
 
 class UserService {
   constructor() {
-    this.users = [...usersData];
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+    this.tableName = 'user_c';
   }
 
   async getAll() {
-    await delay(200);
-    return [...this.users];
+    try {
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "name_c"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "role_c"}},
+          {"field": {"Name": "avatar_c"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "ModifiedOn"}}
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching users:", error?.response?.data?.message || error);
+      return [];
+    }
   }
 
   async getById(id) {
-    await delay(150);
-    const user = this.users.find(u => u.Id === parseInt(id));
-    if (!user) {
-      throw new Error("User not found");
+    try {
+      const params = {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "name_c"}},
+          {"field": {"Name": "email_c"}},
+          {"field": {"Name": "role_c"}},
+          {"field": {"Name": "avatar_c"}},
+          {"field": {"Name": "CreatedOn"}},
+          {"field": {"Name": "ModifiedOn"}}
+        ]
+      };
+      
+      const response = await this.apperClient.getRecordById(this.tableName, id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching user ${id}:`, error?.response?.data?.message || error);
+      return null;
     }
-    return { ...user };
   }
 
   async create(userData) {
-    await delay(350);
-    const newId = Math.max(...this.users.map(u => u.Id)) + 1;
-    const newUser = {
-      Id: newId,
-      ...userData
-    };
-    this.users.push(newUser);
-    return { ...newUser };
+    try {
+      // Only include updateable fields
+      const params = {
+        records: [{
+          Name: userData.Name || userData.name_c,
+          Tags: userData.Tags || "",
+          name_c: userData.name_c || userData.Name,
+          email_c: userData.email_c || "",
+          role_c: userData.role_c || "",
+          avatar_c: userData.avatar_c || ""
+        }]
+      };
+      
+      const response = await this.apperClient.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            if (record.errors) {
+              record.errors.forEach(error => toast.error(`${error.fieldLabel || 'Error'}: ${error.message || error}`));
+            }
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successful.length > 0) {
+          toast.success("User created successfully");
+          return successful[0].data;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Error creating user:", error?.response?.data?.message || error);
+      return null;
+    }
   }
 
   async update(id, userData) {
-    await delay(300);
-    const index = this.users.findIndex(u => u.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("User not found");
+    try {
+      // Only include updateable fields
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: userData.Name || userData.name_c,
+          Tags: userData.Tags || "",
+          name_c: userData.name_c || userData.Name,
+          email_c: userData.email_c,
+          role_c: userData.role_c,
+          avatar_c: userData.avatar_c
+        }]
+      };
+      
+      const response = await this.apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            if (record.errors) {
+              record.errors.forEach(error => toast.error(`${error.fieldLabel || 'Error'}: ${error.message || error}`));
+            }
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successful.length > 0) {
+          toast.success("User updated successfully");
+          return successful[0].data;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Error updating user:", error?.response?.data?.message || error);
+      return null;
     }
-    this.users[index] = { ...this.users[index], ...userData };
-    return { ...this.users[index] };
   }
 
   async delete(id) {
-    await delay(250);
-    const index = this.users.findIndex(u => u.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("User not found");
+    try {
+      const params = { 
+        RecordIds: [parseInt(id)]
+      };
+      
+      const response = await this.apperClient.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
+      }
+      
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} records:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successful.length > 0) {
+          toast.success("User deleted successfully");
+          return true;
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Error deleting user:", error?.response?.data?.message || error);
+      return false;
     }
-    this.users.splice(index, 1);
-    return { success: true };
   }
 
   async getUsersByProject(projectId) {
-    await delay(200);
-    // This would typically join with project data
-    // For now, return all users as they could be assigned to any project
-    return [...this.users];
+    try {
+      // For now, return all users as they could be assigned to any project
+      // In future, could add project-specific filtering
+      return await this.getAll();
+    } catch (error) {
+      console.error("Error getting users by project:", error);
+      return [];
+    }
   }
 }
 

@@ -66,31 +66,31 @@ const KanbanBoardPage = () => {
     let filtered = [...tasks];
 
     // Apply project filter
-    if (selectedProject) {
-      filtered = filtered.filter(task => task.projectId === parseInt(selectedProject));
+if (selectedProject) {
+      filtered = filtered.filter(task => (task.project_id_c?.Id || task.project_id_c) === parseInt(selectedProject));
     }
 
     // Apply search filter
     if (searchValue) {
       const searchLower = searchValue.toLowerCase();
-      filtered = filtered.filter(task => 
-        task.title.toLowerCase().includes(searchLower) ||
-        task.description.toLowerCase().includes(searchLower)
+filtered = filtered.filter(task => 
+        (task.title_c || task.Name || '').toLowerCase().includes(searchLower) ||
+        (task.description_c || '').toLowerCase().includes(searchLower)
       );
     }
 
     // Apply status filter
-    if (statusFilter) {
+if (statusFilter) {
       filtered = filtered.filter(task => task.status === statusFilter);
     }
 
     // Apply priority filter
-    if (priorityFilter) {
+if (priorityFilter) {
       filtered = filtered.filter(task => task.priority === priorityFilter);
     }
 
     // Apply assignee filter
-    if (assigneeFilter) {
+if (assigneeFilter) {
       filtered = filtered.filter(task => task.assigneeId === parseInt(assigneeFilter));
     }
 
@@ -127,8 +127,8 @@ const KanbanBoardPage = () => {
       if (isNewTask) {
         const newTaskData = {
           ...taskData,
-          status: newTaskStatus,
-          projectId: selectedProject ? parseInt(selectedProject) : 1 // Default project
+status_c: newTaskStatus,
+          project_id_c: selectedProject ? parseInt(selectedProject) : 1 // Default project
         };
         const createdTask = await taskService.create(newTaskData);
         setTasks(prev => [...prev, createdTask]);
@@ -174,16 +174,16 @@ const KanbanBoardPage = () => {
   };
 
   const selectedProjectData = projects.find(p => p.Id.toString() === selectedProject);
-  const projectOptions = projects.map(project => ({
+const projectOptions = projects.map(project => ({
     value: project.Id.toString(),
-    label: project.name
+    label: project.name_c || project.Name
   }));
 
   const getTaskCounts = () => {
-    const counts = {
-      todo: filteredTasks.filter(t => t.status === "todo").length,
-      "in-progress": filteredTasks.filter(t => t.status === "in-progress").length,
-      done: filteredTasks.filter(t => t.status === "done").length
+const counts = {
+      todo: filteredTasks.filter(t => t.status_c === "todo").length,
+      "in-progress": filteredTasks.filter(t => t.status_c === "in-progress").length,
+      done: filteredTasks.filter(t => t.status_c === "done").length
     };
     return counts;
   };
@@ -206,7 +206,7 @@ const KanbanBoardPage = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Kanban Board
           </h1>
-          {selectedProjectData && (
+{selectedProjectData && (
             <p className="text-gray-600 mt-1">
               {selectedProjectData.name}
             </p>
