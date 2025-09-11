@@ -10,7 +10,7 @@ const Sidebar = ({ isOpen, onClose, className }) => {
 const navigation = [
     { name: "Dashboard", href: "/", icon: "LayoutDashboard" },
     { name: "Projects", href: "/projects", icon: "FolderOpen" },
-    { name: "Kanban Board", href: "/kanban", icon: "Trello" },
+{ name: "Tasks", href: "/kanban", icon: "Trello" },
     { name: "Gantt View", href: "/gantt", icon: "Calendar" },
     { name: "Team", href: "/team", icon: "Users" },
     { name: "Notifications", href: "/notifications", icon: "Bell" },
