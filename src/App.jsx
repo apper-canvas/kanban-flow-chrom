@@ -13,7 +13,6 @@ import Dashboard from "@/components/pages/Dashboard";
 import Login from "@/components/pages/Login";
 import Projects from "@/components/pages/Projects";
 import Team from "@/components/pages/Team";
-import GanttView from "@/components/pages/GanttView";
 import PromptPassword from "@/components/pages/PromptPassword";
 import KanbanBoard from "@/components/pages/KanbanBoard";
 // Create auth context
@@ -132,7 +131,6 @@ function AppContent() {
           <Route index element={<Dashboard />} />
           <Route path="projects" element={<Projects />} />
           <Route path="kanban" element={<KanbanBoard />} />
-          <Route path="gantt" element={<GanttView />} />
 <Route path="team" element={<Team />} />
           <Route path="notifications" element={<Notifications />} />
         </Route>
